@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Integración Numérica | La Paz, Bolivia</title>
+<style>
+:root{--navy:#10243a;--blue:#176b87;--cyan:#dff4f5;--gold:#e8b04a;--paper:#f4f7fa;--ink:#1d2b39;--muted:#627386;--line:#d9e2ea;--white:#fff;--green:#18794e;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+header{background:linear-gradient(120deg,#10243a,#176b87);color:white;padding:34px 20px 30px;border-bottom:5px solid var(--gold)}
+.wrap{max-width:1180px;margin:auto;padding:0 18px}header .eyebrow{text-transform:uppercase;letter-spacing:2px;font-size:.78rem;color:#bce9eb;font-weight:800}h1{margin:7px 0;font-size:clamp(1.8rem,4vw,3rem);line-height:1.12}header p{max-width:760px;margin:10px 0 0;color:#e2edf3}
+main{padding:24px 0 48px}.layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(300px,.9fr);gap:20px;align-items:start}.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:0 5px 20px #10243a0b;margin-bottom:18px}
+h2{font-size:1.18rem;margin:0 0 15px;color:var(--navy)}h3{font-size:1rem;margin:18px 0 8px;color:var(--navy)}.sub{color:var(--muted);font-size:.9rem;margin-top:-7px}
+label{display:block;font-weight:700;font-size:.88rem;margin:12px 0 5px}input,select,textarea{width:100%;padding:10px 11px;border:1px solid #c8d5df;border-radius:9px;background:#fff;color:var(--ink);font:inherit}textarea{min-height:132px;resize:vertical;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.88rem}
+.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.row.three{grid-template-columns:repeat(3,minmax(0,1fr))}.modebar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.modebtn,.btn{border:1px solid var(--blue);background:white;color:var(--blue);border-radius:9px;padding:9px 13px;font-weight:750;cursor:pointer}.modebtn.active,.btn.primary{background:var(--blue);color:white}.btn.gold{background:var(--gold);border-color:var(--gold);color:#182b3b}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.btn:hover,.modebtn:hover{filter:brightness(.96)}.note{padding:11px 13px;border-radius:10px;background:#eef7fb;border-left:4px solid var(--blue);font-size:.88rem;margin:12px 0}.error{background:#fff0ef;border-left-color:var(--red);color:#8c1d18}.success{background:#eaf8ef;border-left-color:var(--green);color:#145c3b}.hidden{display:none!important}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.metric{background:#f3f8fa;border:1px solid var(--line);border-radius:12px;padding:13px}.metric small{display:block;color:var(--muted);font-weight:700;font-size:.76rem}.metric strong{display:block;font-size:1.18rem;overflow-wrap:anywhere;color:var(--navy);margin-top:5px}
+.tablewrap{overflow:auto;max-height:370px;border:1px solid var(--line);border-radius:10px}table{border-collapse:collapse;width:100%;font-size:.88rem}th,td{text-align:right;padding:9px 11px;border-bottom:1px solid var(--line);white-space:nowrap}th{background:#edf4f7;color:var(--navy);position:sticky;top:0}th:first-child,td:first-child{text-align:left}tbody tr:last-child td{border-bottom:0}.formula{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f6f8fa;padding:12px;border-radius:9px;overflow-wrap:anywhere;font-size:.88rem}
+canvas{width:100%;height:270px;border:1px solid var(--line);border-radius:10px;background:#fff}.exercisegrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.exercise{padding:12px;border:1px solid var(--line);border-radius:10px;cursor:pointer;background:white;text-align:left;color:var(--ink)}.exercise strong{display:block;color:var(--blue)}.exercise span{font-size:.82rem;color:var(--muted)}.exercise:hover{border-color:var(--blue);background:#f5fbfc}.small{font-size:.82rem;color:var(--muted)}footer{padding:22px 0;background:#10243a;color:#d9e6ee;font-size:.85rem}ul{padding-left:20px}.pill{display:inline-block;padding:3px 8px;background:#e7f5f5;border-radius:99px;font-size:.75rem;font-weight:800;color:#155d70}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.metrics{grid-template-columns:1fr}.row.three{grid-template-columns:1fr 1fr}}
+@media(max-width:500px){.row,.row.three,.exercisegrid{grid-template-columns:1fr}.panel{padding:16px}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="eyebrow">Métodos numéricos · Aplicación educativa</div><h1>Integración numérica</h1><p>Resuelve problemas de transporte, elasticidad, geometría, agua y energía usando trapecio compuesto, Simpson 1/3 y Simpson 3/8. Diseñada para practicar y verificar cálculos del desafío grupal de La Paz, Bolivia.</p></div></header>
+<main class="wrap">
+<div class="layout">
+<section>
+<div class="panel">
+<h2>1. Configura el problema</h2>
+<div class="modebar"><button class="modebtn active" id="tabulatedBtn" type="button">Datos tabulados (x, y)</button><button class="modebtn" id="functionBtn" type="button">Función f(x)</button></div>
+<div id="tabulatedPanel">
+<p class="sub">Ingresa un par x,y por línea o usa un ejercicio de ejemplo.</p>
+<label for="dataInput">Pares de datos (separados por coma, punto y coma o espacio)</label>
+<textarea id="dataInput" spellcheck="false">0, 0
+1, 14
+2, 39
+3, 69
+4, 95
+5, 114
+6, 129
+7, 139</textarea>
+<div class="row">
+<div><label for="xUnit">Unidad de x</label><input id="xUnit" value="s" placeholder="Ej. s, m, in"></div>
+<div><label for="yUnit">Unidad de y</label><input id="yUnit" value="mi/h" placeholder="Ej. m/s, N"></div>
+</div>
+</div>
+<div id="functionPanel" class="hidden">
+<p class="sub">Usa x como variable. Funciones disponibles: sin, cos, tan, exp, log, sqrt, abs, sinh, cosh, pi. Puedes escribir x^2.</p>
+<label for="functionInput">Función f(x)</label><input id="functionInput" value="x^2" placeholder="Ej. x^2, cosh(x/24)">
+<div class="row three">
+<div><label for="lower">Límite a</label><input id="lower" type="number" value="0" step="any"></div>
+<div><label for="upper">Límite b</label><input id="upper" type="number" value="2" step="any"></div>
+<div><label for="intervals">Subintervalos n</label><input id="intervals" type="number" value="4" min="1" step="1"></div>
+</div>
+<div class="row"><div><label for="xUnitF">Unidad de x</label><input id="xUnitF" value="u"></div><div><label for="yUnitF">Unidad de f(x)</label><input id="yUnitF" value="u"></div></div>
+</div>
+<div class="row">
+<div><label for="method">Método de integración</label><select id="method"><option value="all">Comparar todos los métodos compatibles</option><option value="trapezoid">Trapecio compuesto</option><option value="simpson13">Simpson 1/3</option><option value="simpson38">Simpson 3/8</option><option value="hybrid">Simpson combinado (1/3 + 3/8)</option></select></div>
+<div><label for="reference">Valor de referencia (opcional)</label><input id="reference" type="number" step="any" placeholder="Para calcular el error"></div>
+</div>
+<div class="row"><div><label for="resultUnit">Unidad del resultado</label><input id="resultUnit" placeholder="Ej. mi, lb·in, m², J"></div><div><label for="digits">Decimales mostrados</label><select id="digits"><option>6</option><option>8</option><option>10</option><option>12</option></select></div></div>
+<div class="actions"><button class="btn primary" id="calculateBtn" type="button">Calcular integral</button><button class="btn" id="clearBtn" type="button">Limpiar</button><button class="btn gold" id="downloadBtn" type="button">Descargar resultados CSV</button></div>
+<div id="message" class="note" role="status">Puedes editar los datos, seleccionar un método y calcular.</div>
+</div>
+<div class="panel"><h2>2. Cargar un ejercicio del documento</h2><p class="sub">Los datos de los ejercicios son didácticos; no representan mediciones oficiales.</p>
+<div class="exercisegrid" id="exerciseGrid"></div>
+</div>
+<div class="panel"><h2>3. Tabla de cálculo y pesos</h2><p class="sub">Los pesos indican cómo contribuye cada ordenada a la fórmula seleccionada.</p><div class="tablewrap"><table id="dataTable"><thead><tr><th>i</th><th>xᵢ</th><th>f(xᵢ)</th><th>Peso trapecio</th><th>Peso S 1/3</th><th>Peso S 3/8</th></tr></thead><tbody><tr><td colspan="6" style="text-align:center">Calcula para generar la tabla.</td></tr></tbody></table></div></div>
+</section>
+<aside>
+<div class="panel"><h2>Resultados</h2><div class="metrics"><div class="metric"><small>Trapecio compuesto</small><strong id="trapResult">—</strong><span class="small" id="trapStatus"></span></div><div class="metric"><small>Simpson 1/3</small><strong id="s13Result">—</strong><span class="small" id="s13Status"></span></div><div class="metric"><small>Simpson 3/8</small><strong id="s38Result">—</strong><span class="small" id="s38Status"></span></div></div>
+<h3>Resultado del método elegido</h3><div class="metric"><small>Integral aproximada</small><strong id="chosenResult">—</strong><span class="small" id="chosenMethod">Sin calcular</span></div>
+<div class="row" style="margin-top:10px"><div class="metric"><small>Error absoluto</small><strong id="absError">—</strong></div><div class="metric"><small>Error porcentual</small><strong id="pctError">—</strong></div></div>
+<div id="methodExplanation" class="note">Selecciona un método para ver las condiciones y la fórmula utilizada.</div>
+</div>
+<div class="panel"><h2>Gráfica de datos e integral</h2><canvas id="chart" width="720" height="330" aria-label="Gráfica de los datos y el área bajo la curva"></canvas><p class="small">La curva une los puntos ingresados; el sombreado representa el área aproximada entre los límites. En datos tabulados, no se inventan puntos intermedios.</p></div>
+<div class="panel"><h2>Fórmulas de referencia</h2>
+<div class="formula"><b>Trapecio compuesto</b><br>T = h [(f₀ + fₙ)/2 + Σ fᵢ]</div>
+<div class="formula" style="margin-top:9px"><b>Simpson 1/3</b><br>S = (h/3) [f₀ + fₙ + 4Σ fᵢ impares + 2Σ fᵢ pares interiores]<br><span class="small">Requiere n par.</span></div>
+<div class="formula" style="margin-top:9px"><b>Simpson 3/8</b><br>S = (3h/8) [f₀ + fₙ + 3Σ fᵢ no múltiplos de 3 + 2Σ fᵢ múltiplos de 3 interiores]<br><span class="small">Requiere n múltiplo de 3.</span></div>
+<div class="note">h = (b − a)/n. Para datos tabulados, los valores de x deben estar igualmente espaciados. Error absoluto = |Iref − Iaprox|. Si no hay referencia conocida, el error verdadero no se puede calcular.</div>
+</div>
+</aside>
+</div>
+<div class="panel"><h2>Verificación mínima de código</h2><p>El ejercicio de prueba recomendado en la guía es integrar <b>f(x) = x²</b> entre 0 y 2. El valor exacto es <b>8/3 = 2.666666…</b>. Selecciona la pestaña Función f(x), deja x², [0, 2] y prueba n=4 y n=8.</p><button class="btn" id="testBtn" type="button">Cargar prueba f(x) = x²</button><span class="small" id="testResult"></span></div>
+</main>
+<footer><div class="wrap">Herramienta académica de integración numérica · Métodos del trapecio compuesto, Simpson 1/3 y Simpson 3/8. Verifica unidades, hipótesis y procedencia de los datos antes de interpretar los resultados.</div></footer>
+<script>
+const $=id=>document.getElementById(id);
+let mode='tabulated', latestRows=[], latestResults={};
+const exercises=[
+{id:19,title:'19 · Distancia del vehículo',desc:'Velocidad tabulada durante 7 segundos',x:[0,1,2,3,4,5,6,7],y:[0,14,39,69,95,114,129,139],xu:'s',yu:'mi/h',ru:'mi',ref:null,mode:'tabulated',method:'hybrid',note:'La integral de velocidad da mi/h·s; divide por 3600 para convertir segundos a horas. Esta aplicación integra los valores tal como se ingresan; para reproducir el solucionario en millas, divide el resultado por 3600.'},
+{id:20,title:'20 · Trabajo de banda elástica',desc:'Fuerza medida a diferentes desplazamientos',x:[0,.4,.8,1.2,1.6,2,2.4,2.8],y:[0,.85,1.30,1.60,1.87,2.14,2.34,2.52],xu:'in',yu:'lb',ru:'lb·in',ref:null,mode:'tabulated',method:'hybrid',note:'El trabajo es la integral de fuerza respecto al desplazamiento. lb·in puede convertirse a joules multiplicando aproximadamente por 0.112985.'},
+{id:21,title:'21 · Área de perfil',desc:'Coordenadas digitalizadas ilustrativas',x:[1,2,3,4,5,6,7,8,9,10],y:[1.3,3.7,4.6,4.4,2.7,2.5,3.6,5.3,6,5.9],xu:'u',yu:'u',ru:'u²',ref:null,mode:'tabulated',method:'all',note:'Las alturas son aproximaciones visuales. El resultado depende de la digitalización y no debe tratarse como una medición exacta.'},
+{id:22,title:'22 · Longitud de catenaria',desc:'Modelo y = 24 cosh(x/24)',fn:'cosh(x/24)',a:-12,b:26,n:8,xu:'ft',yu:'—',ru:'ft',ref:43.898841,mode:'function',method:'all',note:'La longitud de arco es la integral de sqrt(1 + [y′(x)]²), no la integral de y(x). Para la catenaria dada, el integrando es cosh(x/24).'},
+{id:23,title:'23 · Caudal de tubería',desc:'Perfil de velocidad radial',fn:'160*pi*x*(1-x/0.25)^(1/7)',a:0,b:.25,n:8,xu:'in',yu:'in²/s',ru:'in³/s',ref:49*Math.PI/12,mode:'function',method:'all',note:'x representa el radio r. Se integra 2πr·v(r). La función tiene una pendiente pronunciada cerca de la pared, por lo que la aproximación puede converger lentamente.'},
+{id:24,title:'24 · Longitud de cardioide',desc:'Integrando de longitud de arco para b = 5',fn:'20*sin(x/2)',a:0,b:2*Math.PI,n:8,xu:'rad',yu:'—',ru:'unidades',ref:80,mode:'function',method:'all',note:'El integrando de longitud de arco es 20 sin(t/2) en [0, 2π]. La integral exacta es 80.'},
+{id:25,title:'25 · Energía potencial',desc:'Satélite de 500 kg elevado 800 km',fn:'500*9.81*6371000^2/(6371000+x)^2',a:0,b:800000,n:8,xu:'m',yu:'N',ru:'J',ref:500*9.81*6371000*800000/(6371000+800000),mode:'function',method:'all',note:'La integral del peso variable con la altura estima el cambio de energía potencial. Los parámetros son los del enunciado didáctico.'},
+{id:26,title:'26 · Superficie del lago',desc:'Introducir anchuras medidas cada 20 millas',x:[40,60,80,100,120,140,160,180,200,220,240,260],y:[0,0,0,0,0,0,0,0,0,0,0,0],xu:'mi',yu:'mi',ru:'mi²',ref:9940,mode:'tabulated',method:'all',note:'La guía no incluye la tabla oficial de anchuras. Sustituye los ceros por mediciones de la figura antes de calcular; el área de referencia es 9,940 mi².'},
+{id:27,title:'27 · Volumen por diámetros',desc:'Diámetro medido a lo largo del eje',x:[0,1,2,3,4,5,6,7,8,9,10,11,12],y:[0,2.6,3.2,4.8,5.6,6,6.2,6,5.6,4.8,3.3,2.6,0],xu:'in',yu:'in',ru:'in³',ref:null,mode:'tabulated',method:'all',note:'Para el volumen de revolución se integra πr² con r=d/2. No uses directamente la integral del diámetro como volumen.'}
+];
+function setMode(m){mode=m;$('tabulatedPanel').classList.toggle('hidden',m!=='tabulated');$('functionPanel').classList.toggle('hidden',m!=='function');$('tabulatedBtn').classList.toggle('active',m==='tabulated');$('functionBtn').classList.toggle('active',m==='function')}
+$('tabulatedBtn').onclick=()=>setMode('tabulated');$('functionBtn').onclick=()=>setMode('function');
+function fmt(v){if(v===null||v===undefined||!Number.isFinite(v))return '—';return v.toLocaleString('es-BO',{minimumFractionDigits:Number($('digits').value),maximumFractionDigits:Number($('digits').value),useGrouping:false})}
+function parseData(){let lines=$('dataInput').value.trim().split(/\n+/).filter(s=>s.trim());if(lines.length<2)throw Error('Ingresa al menos dos pares de datos x,y.');let xs=[],ys=[];lines.forEach((line,i)=>{let parts=line.trim().split(/[;, \t]+/).filter(Boolean);if(parts.length!==2)throw Error(`Línea ${i+1}: se esperan exactamente dos números (x, y).`);let x=Number(parts[0]),y=Number(parts[1]);if(!Number.isFinite(x)||!Number.isFinite(y))throw Error(`Línea ${i+1}: hay un dato no numérico.`);xs.push(x);ys.push(y)});return {xs,ys}}
+function makeFunction(expr){if(!expr.trim())throw Error('Escribe una función f(x).');if(!/^[0-9xX+\-*/().,\s^a-zA-Z_]+$/.test(expr))throw Error('La función contiene caracteres no permitidos.');let js=expr.replace(/\^/g,'**').replace(/\bpi\b/gi,'Math.PI');const names=['sin','cos','tan','asin','acos','atan','exp','log','sqrt','abs','sinh','cosh','tanh','floor','ceil','round'];names.forEach(n=>{js=js.replace(new RegExp('\\b'+n+'\\s*\\(','gi'),'Math.'+n+'(')});let fn;try{fn=new Function('x','"use strict"; return ('+js+');')}catch(e){throw Error('No se pudo interpretar la función. Revisa la expresión.')}return x=>{let y;try{y=fn(x)}catch(e){throw Error('La función no se pudo evaluar en x='+x)}if(typeof y!=='number'||!Number.isFinite(y))throw Error('La función produce un valor no finito en x='+x);return y}}
+function getData(){if(mode==='tabulated'){let d=parseData();return {...d,xUnit:$('xUnit').value.trim(),yUnit:$('yUnit').value.trim()}}let a=Number($('lower').value),b=Number($('upper').value),n=Number($('intervals').value);if(!Number.isFinite(a)||!Number.isFinite(b)||a>=b)throw Error('Los límites deben ser números y cumplir a < b.');if(!Number.isInteger(n)||n<1||n>10000)throw Error('n debe ser un entero entre 1 y 10000.');let fn=makeFunction($('functionInput').value),xs=[],ys=[],h=(b-a)/n;for(let i=0;i<=n;i++){xs.push(a+i*h);ys.push(fn(xs[i]))}return {xs,ys,xUnit:$('xUnitF').value.trim(),yUnit:$('yUnitF').value.trim()}}
+function checkSpacing(xs){let h=(xs[xs.length-1]-xs[0])/(xs.length-1);if(!(h>0))throw Error('Los valores x deben ser crecientes.');for(let i=0;i<xs.length;i++){if(i&&xs[i]<=xs[i-1])throw Error('Los valores x deben ser estrictamente crecientes, sin duplicados.');if(Math.abs((xs[i]-xs[0])-i*h)>1e-7*Math.max(1,Math.abs(h),Math.abs(xs[xs.length-1])))throw Error('Los valores x no tienen espaciamiento uniforme. Ajusta los datos o usa nodos equidistantes.')}return h}
+function weighted(ys,weights,factor){return factor*ys.reduce((s,y,i)=>s+y*weights[i],0)}
+function calcMethods(xs,ys,h){let n=xs.length-1,wt=ys.map((_,i)=>(i===0||i===n)?0.5:1),out={trapezoid:weighted(ys,wt,h)};if(n%2===0){let w=ys.map((_,i)=>(i===0||i===n)?1:(i%2?4:2));out.simpson13=weighted(ys,w,h/3)}if(n%3===0){let w=ys.map((_,i)=>(i===0||i===n)?1:(i%3===0?2:3));out.simpson38=weighted(ys,w,3*h/8)}if(n>=3&&n%2===1){let n13=n-3,w1=ys.slice(0,n13+1).map((_,i)=>(i===0||i===n13)?1:(i%2?4:2)),v1=n13>=2?weighted(ys.slice(0,n13+1),w1,h/3):0;let yy=ys.slice(n13),w3=yy.map((_,i)=>(i===0||i===3)?1:(i%3===0?2:3));out.hybrid=v1+weighted(yy,w3,3*h/8)}else if(n>=3&&n%2===0&&n%3!==0){/* Simpson 1/3 already compatible */}return out}
+function weightArrays(n){return {trap:Array.from({length:n+1},(_,i)=>(i===0||i===n)?0.5:1),s13:n%2===0?Array.from({length:n+1},(_,i)=>(i===0||i===n)?1:(i%2?4:2)):null,s38:n%3===0?Array.from({length:n+1},(_,i)=>(i===0||i===n)?1:(i%3===0?2:3)):null}}
+function renderTable(xs,ys){let n=xs.length-1,w=weightArrays(n);$('dataTable').querySelector('tbody').innerHTML=xs.map((x,i)=>`<tr><td>${i}</td><td>${fmt(x)}</td><td>${fmt(ys[i])}</td><td>${w.trap[i]}</td><td>${w.s13?w.s13[i]:'—'}</td><td>${w.s38?w.s38[i]:'—'}</td></tr>`).join('')}
+function draw(xs,ys){let c=$('chart'),ctx=c.getContext('2d'),W=c.width,H=c.height;ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);if(xs.length<2)return;let xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(0,...ys),ymax=Math.max(0,...ys);if(ymax===ymin){ymax=ymin+1}let pad={l:55,r:20,t:20,b:42},px=x=>pad.l+(x-xmin)/(xmax-xmin)*(W-pad.l-pad.r),py=y=>H-pad.b-(y-ymin)/(ymax-ymin)*(H-pad.t-pad.b);ctx.strokeStyle='#e1e8ee';ctx.lineWidth=1;for(let j=0;j<=4;j++){let y=pad.t+j*(H-pad.t-pad.b)/4;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke()}ctx.fillStyle='#627386';ctx.font='12px sans-serif';ctx.textAlign='right';ctx.fillText(ymax.toPrecision(4),pad.l-8,pad.t+4);ctx.fillText(ymin.toPrecision(4),pad.l-8,H-pad.b+4);ctx.textAlign='center';ctx.fillText(xmin.toPrecision(4),pad.l,H-15);ctx.fillText(xmax.toPrecision(4),W-pad.r,H-15);
+ctx.beginPath();ctx.moveTo(px(xs[0]),py(0));xs.forEach((x,i)=>ctx.lineTo(px(x),py(ys[i])));ctx.lineTo(px(xs[xs.length-1]),py(0));ctx.closePath();ctx.fillStyle='rgba(23,107,135,.15)';ctx.fill();ctx.beginPath();xs.forEach((x,i)=>i?ctx.lineTo(px(x),py(ys[i])):ctx.moveTo(px(x),py(ys[i])));ctx.strokeStyle='#176b87';ctx.lineWidth=3;ctx.stroke();xs.forEach((x,i)=>{ctx.beginPath();ctx.arc(px(x),py(ys[i]),3.5,0,Math.PI*2);ctx.fillStyle='#e8b04a';ctx.fill();ctx.strokeStyle='#10243a';ctx.lineWidth=1;ctx.stroke()})}
+function setMetric(id,val,status=''){$(id).textContent=val===undefined?'—':fmt(val);if(status){let s=$(id.replace('Result','Status'));if(s)s.textContent=status}}
+function calculate(){try{let d=getData(),xs=d.xs,ys=d.ys;if(xs.length!==ys.length)throw Error('Las listas x e y deben tener la misma longitud.');let h=checkSpacing(xs),n=xs.length-1,res=calcMethods(xs,ys,h),method=$('method').value;latestRows=xs.map((x,i)=>({i,x,y:ys[i]}));latestResults=res;renderTable(xs,ys);draw(xs,ys);setMetric('trapResult',res.trapezoid,res.trapezoid!==undefined?'Disponible':'');setMetric('s13Result',res.simpson13,res.simpson13!==undefined?'n par':'Requiere n par');setMetric('s38Result',res.simpson38,res.simpson38!==undefined?'n múltiplo de 3':'Requiere n múltiplo de 3');
+let chosen,key,expl;if(method==='all'){key=res.simpson13!==undefined?'simpson13':res.simpson38!==undefined?'simpson38':'trapezoid';chosen=res[key];expl='Comparación: se muestran los métodos compatibles con n='+n+'.';}
+else if(method==='trapezoid'){key='trapezoid';chosen=res[key];expl='Trapecio compuesto: aplica para cualquier n ≥ 1.'}
+else if(method==='simpson13'){key='simpson13';chosen=res[key];if(chosen===undefined)throw Error('Simpson 1/3 requiere un número par de subintervalos n.');expl='Simpson 1/3: requiere n par.'}
+else if(method==='simpson38'){key='simpson38';chosen=res[key];if(chosen===undefined)throw Error('Simpson 3/8 requiere n múltiplo de 3.');expl='Simpson 3/8: requiere n múltiplo de 3.'}
+else{key='hybrid';chosen=res[key];if(chosen===undefined)throw Error('Simpson combinado requiere n impar y n ≥ 3; combina Simpson 1/3 en los primeros n−3 intervalos y Simpson 3/8 en los últimos tres.');expl='Simpson combinado: usa Simpson 1/3 en los primeros n−3 intervalos pares y Simpson 3/8 en los últimos tres.'}
+$('chosenResult').textContent=fmt(chosen);$('chosenMethod').textContent=({trapezoid:'Trapecio compuesto',simpson13:'Simpson 1/3',simpson38:'Simpson 3/8',hybrid:'Simpson combinado'})[key];$('methodExplanation').textContent=expl+' h = '+fmt(h)+' '+(d.xUnit||'unidad x')+'.';let ref=$('reference').value.trim();if(ref!==''&&Number.isFinite(Number(ref))){let ea=Math.abs(Number(ref)-chosen);$('absError').textContent=fmt(ea);$('pctError').textContent=Number(ref)!==0?fmt(100*ea/Math.abs(Number(ref)))+' %':'No definido (referencia 0)'}else{$('absError').textContent='—';$('pctError').textContent='Sin referencia'}let unit=$('resultUnit').value.trim();if(unit)$('chosenResult').textContent+=' '+unit;$('message').className='note success';$('message').textContent=`Cálculo realizado correctamente. n = ${n}, h = ${fmt(h)} ${d.xUnit||''}. Se verificó el espaciamiento uniforme.`;if(mode==='tabulated'&&d.yUnit&&d.xUnit&&!$('resultUnit').value.trim())$('message').textContent+=' La unidad integral resultante es '+d.yUnit+'·'+d.xUnit+'.';}
+catch(e){$('message').className='note error';$('message').textContent=e.message;$('chosenResult').textContent='—';$('methodExplanation').textContent='Corrige los datos o las condiciones del método y vuelve a calcular.'}}
+$('calculateBtn').onclick=calculate;
+$('clearBtn').onclick=()=>{if(mode==='tabulated')$('dataInput').value='';else $('functionInput').value='';$('message').className='note';$('message').textContent='Campo limpiado. Introduce datos válidos para continuar.'};
+$('downloadBtn').onclick=()=>{if(!latestRows.length){$('message').className='note error';$('message').textContent='Primero calcula una integral para descargar los resultados.';return}let csv='i,x,f(x),peso_trapecio,peso_simpson13,peso_simpson38\n';let n=latestRows.length-1,w=weightArrays(n);csv+=latestRows.map((r,i)=>[r.i,r.x,r.y,w.trap[i],w.s13?w.s13[i]:'',w.s38?w.s38[i]:''].join(',')).join('\n');csv+='\nMetodo,Resultado\n'+Object.entries(latestResults).map(([k,v])=>k+','+v).join('\n');let blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='resultados_integracion_numerica.csv';a.click();URL.revokeObjectURL(url)};
+function loadExercise(ex){$('reference').value=ex.ref===null?'':ex.ref;$('resultUnit').value=ex.ru||'';$('method').value=ex.method||'all';if(ex.mode==='function'){setMode('function');$('functionInput').value=ex.fn;$('lower').value=ex.a;$('upper').value=ex.b;$('intervals').value=ex.n;$('xUnitF').value=ex.xu||'u';$('yUnitF').value=ex.yu||'u'}else{setMode('tabulated');$('dataInput').value=ex.x.map((x,i)=>x+', '+ex.y[i]).join('\n');$('xUnit').value=ex.xu||'u';$('yUnit').value=ex.yu||'u'}$('message').className='note';$('message').textContent=ex.note||'Ejercicio cargado. Revisa los datos y calcula.';calculate()}
+$('exerciseGrid').innerHTML=exercises.map((e,i)=>`<button type="button" class="exercise" data-ex="${i}"><strong>${e.title}</strong><span>${e.desc}</span></button>`).join('');document.querySelectorAll('[data-ex]').forEach(b=>b.onclick=()=>loadExercise(exercises[Number(b.dataset.ex)]));
+$('testBtn').onclick=()=>{setMode('function');$('functionInput').value='x^2';$('lower').value=0;$('upper').value=2;$('intervals').value=4;$('reference').value=8/3;$('resultUnit').value='u³';$('method').value='all';calculate();$('testResult').textContent=' Prueba cargada; repite con n=8 para comparar.'};
+calculate();
+</script>
+</body>
+</html>
